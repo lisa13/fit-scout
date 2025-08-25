@@ -1,0 +1,96 @@
+{
+  "nike": {
+    "shoes": {
+      "US": {
+        "6": { "EU": "38", "UK": "5.5", "foot_mm": 240 },
+        "7": { "EU": "39", "UK": "6.5", "foot_mm": 250 },
+        "8": { "EU": "40", "UK": "7.5", "foot_mm": 260 },
+        "9": { "EU": "41", "UK": "8.5", "foot_mm": 270 },
+        "10": { "EU": "42", "UK": "9.5", "foot_mm": 280 },
+        "11": { "EU": "43", "UK": "10.5", "foot_mm": 290 },
+        "12": { "EU": "44", "UK": "11.5", "foot_mm": 300 }
+      }
+    },
+    "clothing": {
+      "tops": {
+        "XS": { "chest_cm": 86, "waist_cm": 71, "shoulder_cm": 43 },
+        "S": { "chest_cm": 91, "waist_cm": 76, "shoulder_cm": 45 },
+        "M": { "chest_cm": 96, "waist_cm": 81, "shoulder_cm": 47 },
+        "L": { "chest_cm": 101, "waist_cm": 86, "shoulder_cm": 49 },
+        "XL": { "chest_cm": 106, "waist_cm": 91, "shoulder_cm": 51 }
+      },
+      "bottoms": {
+        "28": { "waist_cm": 71, "inseam_cm": 81, "hip_cm": 91 },
+        "30": { "waist_cm": 76, "inseam_cm": 81, "hip_cm": 96 },
+        "32": { "waist_cm": 81, "inseam_cm": 81, "hip_cm": 101 },
+        "34": { "waist_cm": 86, "inseam_cm": 81, "hip_cm": 106 },
+        "36": { "waist_cm": 91, "inseam_cm": 81, "hip_cm": 111 }
+      }
+    }
+  },
+  "adidas": {
+    "shoes": {
+      "US": {
+        "6": { "EU": "38", "UK": "5.5", "foot_mm": 240 },
+        "7": { "EU": "39", "UK": "6.5", "foot_mm": 250 },
+        "8": { "EU": "40", "UK": "7.5", "foot_mm": 260 },
+        "9": { "EU": "41", "UK": "8.5", "foot_mm": 270 },
+        "10": { "EU": "42", "UK": "9.5", "foot_mm": 280 },
+        "11": { "EU": "43", "UK": "10.5", "foot_mm": 290 },
+        "12": { "EU": "44", "UK": "11.5", "foot_mm": 300 }
+      }
+    },
+    "clothing": {
+      "tops": {
+        "XS": { "chest_cm": 86, "waist_cm": 71, "shoulder_cm": 43 },
+        "S": { "chest_cm": 91, "waist_cm": 76, "shoulder_cm": 45 },
+        "M": { "chest_cm": 96, "waist_cm": 81, "shoulder_cm": 47 },
+        "L": { "chest_cm": 101, "waist_cm": 86, "shoulder_cm": 49 },
+        "XL": { "chest_cm": 106, "waist_cm": 91, "shoulder_cm": 51 }
+      },
+      "bottoms": {
+        "28": { "waist_cm": 71, "inseam_cm": 81, "hip_cm": 91 },
+        "30": { "waist_cm": 76, "inseam_cm": 81, "hip_cm": 96 },
+        "32": { "waist_cm": 81, "inseam_cm": 81, "hip_cm": 101 },
+        "34": { "waist_cm": 86, "inseam_cm": 81, "hip_cm": 106 },
+        "36": { "waist_cm": 91, "inseam_cm": 81, "hip_cm": 111 }
+      }
+    }
+  },
+  "levis": {
+    "clothing": {
+      "tops": {
+        "XS": { "chest_cm": 86, "waist_cm": 71, "shoulder_cm": 43 },
+        "S": { "chest_cm": 91, "waist_cm": 76, "shoulder_cm": 45 },
+        "M": { "chest_cm": 96, "waist_cm": 81, "shoulder_cm": 47 },
+        "L": { "chest_cm": 101, "waist_cm": 86, "shoulder_cm": 49 },
+        "XL": { "chest_cm": 106, "waist_cm": 91, "shoulder_cm": 51 }
+      },
+      "bottoms": {
+        "28": { "waist_cm": 71, "inseam_cm": 81, "hip_cm": 91 },
+        "30": { "waist_cm": 76, "inseam_cm": 81, "hip_cm": 96 },
+        "32": { "waist_cm": 81, "inseam_cm": 81, "hip_cm": 101 },
+        "34": { "waist_cm": 86, "inseam_cm": 81, "hip_cm": 106 },
+        "36": { "waist_cm": 91, "inseam_cm": 81, "hip_cm": 111 }
+      }
+    }
+  },
+  "uniqlo": {
+    "clothing": {
+      "tops": {
+        "XS": { "chest_cm": 86, "waist_cm": 71, "shoulder_cm": 43 },
+        "S": { "chest_cm": 91, "waist_cm": 76, "shoulder_cm": 45 },
+        "M": { "chest_cm": 96, "waist_cm": 81, "shoulder_cm": 47 },
+        "L": { "chest_cm": 101, "waist_cm": 86, "shoulder_cm": 49 },
+        "XL": { "chest_cm": 106, "waist_cm": 91, "shoulder_cm": 51 }
+      },
+      "bottoms": {
+        "28": { "waist_cm": 71, "inseam_cm": 81, "hip_cm": 91 },
+        "30": { "waist_cm": 76, "inseam_cm": 81, "hip_cm": 96 },
+        "32": { "waist_cm": 81, "inseam_cm": 81, "hip_cm": 101 },
+        "34": { "waist_cm": 86, "inseam_cm": 81, "hip_cm": 106 },
+        "36": { "waist_cm": 91, "inseam_cm": 81, "hip_cm": 111 }
+      }
+    }
+  }
+}

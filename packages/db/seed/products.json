@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1",
+    "title": "Nike Air Max 270",
+    "brandId": "nike",
+    "category": "shoes",
+    "price": 150,
+    "tags": ["running", "athletic", "comfortable", "cushioned"],
+    "image": "/images/nike-air-max-270.jpg",
+    "textVec": null
+  },
+  {
+    "id": "2",
+    "title": "Adidas Ultraboost 22",
+    "brandId": "adidas",
+    "category": "shoes",
+    "price": 180,
+    "tags": ["running", "boost", "responsive", "energy"],
+    "image": "/images/adidas-ultraboost-22.jpg",
+    "textVec": null
+  },
+  {
+    "id": "3",
+    "title": "Levi's 501 Original Jeans",
+    "brandId": "levis",
+    "category": "clothing",
+    "price": 89,
+    "tags": ["denim", "classic", "straight-fit", "timeless"],
+    "image": "/images/levis-501-jeans.jpg",
+    "textVec": null
+  },
+  {
+    "id": "4",
+    "title": "Uniqlo Airism T-Shirt",
+    "brandId": "uniqlo",
+    "category": "clothing",
+    "price": 19,
+    "tags": ["cotton", "breathable", "lightweight", "casual"],
+    "image": "/images/uniqlo-airism-tshirt.jpg",
+    "textVec": null
+  },
+  {
+    "id": "5",
+    "title": "Nike Dri-FIT Training Shirt",
+    "brandId": "nike",
+    "category": "clothing",
+    "price": 35,
+    "tags": ["moisture-wicking", "training", "athletic", "performance"],
+    "image": "/images/nike-drifit-shirt.jpg",
+    "textVec": null
+  },
+  {
+    "id": "6",
+    "title": "Converse Chuck Taylor All Star",
+    "brandId": "converse",
+    "category": "shoes",
+    "price": 65,
+    "tags": ["canvas", "classic", "casual", "versatile"],
+    "image": "/images/converse-chuck-taylor.jpg",
+    "textVec": null
+  },
+  {
+    "id": "7",
+    "title": "Zara Oversized Blazer",
+    "brandId": "zara",
+    "category": "clothing",
+    "price": 89,
+    "tags": ["blazer", "oversized", "trendy", "formal"],
+    "image": "/images/zara-oversized-blazer.jpg",
+    "textVec": null
+  },
+  {
+    "id": "8",
+    "title": "Vans Old Skool",
+    "brandId": "vans",
+    "category": "shoes",
+    "price": 60,
+    "tags": ["skate", "classic", "side-stripe", "durable"],
+    "image": "/images/vans-old-skool.jpg",
+    "textVec": null
+  },
+  {
+    "id": "9",
+    "title": "H&M Slim Fit Chinos",
+    "brandId": "h&m",
+    "category": "clothing",
+    "price": 39,
+    "tags": ["chinos", "slim-fit", "casual", "versatile"],
+    "image": "/images/hm-slim-chinos.jpg",
+    "textVec": null
+  },
+  {
+    "id": "10",
+    "title": "Adidas Tiro Track Pants",
+    "brandId": "adidas",
+    "category": "clothing",
+    "price": 55,
+    "tags": ["track-pants", "athletic", "comfortable", "sporty"],
+    "image": "/images/adidas-tiro-pants.jpg",
+    "textVec": null
+  },
+  {
+    "id": "11",
+    "title": "Nike Zoom Fly 5",
+    "brandId": "nike",
+    "category": "shoes",
+    "price": 160,
+    "tags": ["running", "zoom", "lightweight", "fast"],
+    "image": "/images/nike-zoom-fly-5.jpg",
+    "textVec": null
+  },
+  {
+    "id": "12",
+    "title": "Uniqlo Slim Fit Jeans",
+    "brandId": "uniqlo",
+    "category": "clothing",
+    "price": 49,
+    "tags": ["denim", "slim-fit", "stretch", "comfortable"],
+    "image": "/images/uniqlo-slim-jeans.jpg",
+    "textVec": null
+  }
+]
