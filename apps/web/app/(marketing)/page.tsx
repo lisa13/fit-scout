@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Button } from '@/apps/web/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/apps/web/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Search, Ruler } from 'lucide-react'
 
 export default function HomePage() {

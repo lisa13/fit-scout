@@ -1,0 +1,50 @@
+[
+  {
+    "id": "nike",
+    "name": "Nike",
+    "country": "USA",
+    "categories": ["shoes", "clothing", "accessories"]
+  },
+  {
+    "id": "adidas",
+    "name": "Adidas",
+    "country": "Germany",
+    "categories": ["shoes", "clothing", "accessories"]
+  },
+  {
+    "id": "levis",
+    "name": "Levi's",
+    "country": "USA",
+    "categories": ["clothing"]
+  },
+  {
+    "id": "uniqlo",
+    "name": "Uniqlo",
+    "country": "Japan",
+    "categories": ["clothing"]
+  },
+  {
+    "id": "zara",
+    "name": "Zara",
+    "country": "Spain",
+    "categories": ["clothing", "accessories"]
+  },
+  {
+    "id": "h&m",
+    "name": "H&M",
+    "country": "Sweden",
+    "categories": ["clothing", "accessories"]
+  },
+  {
+    "id": "converse",
+    "name": "Converse",
+    "country": "USA",
+    "categories": ["shoes"]
+  },
+  {
+    "id": "vans",
+    "name": "Vans",
+    "country": "USA",
+    "categories": ["shoes"]
+  }
+]

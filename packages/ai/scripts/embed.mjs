@@ -12,7 +12,7 @@ async function embedProducts() {
     const embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')
     
     console.log('Loading products data...')
-    const productsPath = path.join(__dirname, '..', 'data', 'products.json')
+    const productsPath = path.join(__dirname, '..', '..', 'db', 'seed', 'products.json')
     const productsData = await fs.readFile(productsPath, 'utf-8')
     const products = JSON.parse(productsData)
     

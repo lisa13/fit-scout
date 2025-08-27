@@ -1,35 +1,15 @@
-import brands from '@/data/brands.json'
-import sizeCharts from '@/data/sizeCharts.json'
-
-export interface SizeRequest {
-  brand: string
-  category: string
-  measurements: {
-    chest_cm?: number
-    waist_cm?: number
-    shoulder_cm?: number
-    inseam_cm?: number
-    hip_cm?: number
-    foot_mm?: number
-  }
-  fitPreference: 'slim' | 'regular' | 'loose'
-}
-
-export interface SizeSuggestion {
-  size: string
-  confidence: number
-  rationale: string
-  measurements: Record<string, number>
-}
+import { SizeSuggestInput, SizeSuggestOutput } from '@fit-scout/types'
+import { getBrands, getSizeCharts } from '@fit-scout/db'
 
 /**
  * Rule-based size suggestion algorithm
  * Prioritizes garment-specific sizing, falls back to body measurements
  */
-export function suggestSize(request: SizeRequest): SizeSuggestion {
-  const { brand, category, measurements, fitPreference } = request
+export function suggestSize(input: SizeSuggestInput): SizeSuggestOutput {
+  const { brand, category, fitPref, measurements } = input
 
   // Validate brand exists
+  const brands = getBrands()
   const brandData = brands.find((b) => b.id === brand)
   if (!brandData) {
     throw new Error(`Brand '${brand}' not found`)
@@ -41,7 +21,8 @@ export function suggestSize(request: SizeRequest): SizeSuggestion {
   }
 
   // Get size chart for brand and category
-  const brandSizeChart = (sizeCharts as any)[brand]
+  const sizeCharts = getSizeCharts()
+  const brandSizeChart = sizeCharts[brand]
   if (!brandSizeChart || !brandSizeChart[category]) {
     throw new Error(`Size chart not available for ${brand} ${category}`)
   }
@@ -53,32 +34,43 @@ export function suggestSize(request: SizeRequest): SizeSuggestion {
     category,
     measurements,
     categorySizeChart,
-    fitPreference
+    fitPref
   )
 
   if (garmentSuggestion.confidence > 0.7) {
-    return garmentSuggestion
+    return {
+      sizeLabel: garmentSuggestion.size,
+      confidence: garmentSuggestion.confidence,
+      rationale: garmentSuggestion.rationale,
+      alternates: generateAlternates(garmentSuggestion.size, categorySizeChart),
+    }
   }
 
   // Fallback to body measurement approach
-  return tryBodyMeasurementSizing(
+  const fallbackSuggestion = tryBodyMeasurementSizing(
     category,
     measurements,
     categorySizeChart,
-    fitPreference
+    fitPref
   )
+
+  return {
+    sizeLabel: fallbackSuggestion.size,
+    confidence: fallbackSuggestion.confidence,
+    rationale: fallbackSuggestion.rationale,
+    alternates: generateAlternates(fallbackSuggestion.size, categorySizeChart),
+  }
 }
 
 function tryGarmentFirstSizing(
   category: string,
-  measurements: SizeRequest['measurements'],
+  measurements: SizeSuggestInput['measurements'],
   sizeChart: any,
-  fitPreference: string
-): SizeSuggestion {
+  fitPref: string
+): { size: string; confidence: number; rationale: string } {
   let bestSize = ''
   let bestConfidence = 0
   let bestRationale = ''
-  let bestMeasurements: Record<string, number> = {}
 
   if (category === 'shoes' && measurements.foot_mm) {
     // Shoe sizing based on foot length
@@ -93,14 +85,13 @@ function tryGarmentFirstSizing(
       if (difference < minDifference) {
         minDifference = difference
         closestSize = size
-        bestMeasurements = sizeData
       }
     }
 
     const confidence = Math.max(0.8, 1 - minDifference / 50) // Higher confidence for closer matches
     bestSize = closestSize
     bestConfidence = confidence
-    bestRationale = `Foot length ${measurements.foot_mm}mm matches closest to US ${closestSize} (${bestMeasurements.foot_mm}mm)`
+    bestRationale = `Foot length ${measurements.foot_mm}mm matches closest to US ${closestSize}`
   } else if (category === 'clothing') {
     // Clothing sizing based on primary measurements
     const subCategories = Object.keys(sizeChart)
@@ -111,13 +102,12 @@ function tryGarmentFirstSizing(
       
       for (const size of sizes) {
         const sizeData = subChart[size]
-        const confidence = calculateClothingConfidence(measurements, sizeData, fitPreference)
+        const confidence = calculateClothingConfidence(measurements, sizeData, fitPref)
         
         if (confidence > bestConfidence) {
           bestSize = size
           bestConfidence = confidence
-          bestMeasurements = sizeData
-          bestRationale = `Best match for ${subCategory} based on measurements and ${fitPreference} fit preference`
+          bestRationale = `Best match for ${subCategory} based on measurements and ${fitPref} fit preference`
         }
       }
     }
@@ -127,21 +117,19 @@ function tryGarmentFirstSizing(
     size: bestSize,
     confidence: bestConfidence,
     rationale: bestRationale,
-    measurements: bestMeasurements,
   }
 }
 
 function tryBodyMeasurementSizing(
   category: string,
-  measurements: SizeRequest['measurements'],
+  measurements: SizeSuggestInput['measurements'],
   sizeChart: any,
-  fitPreference: string
-): SizeSuggestion {
+  fitPref: string
+): { size: string; confidence: number; rationale: string } {
   // Fallback logic using available measurements
   let bestSize = ''
   let bestConfidence = 0
   let bestRationale = ''
-  let bestMeasurements: Record<string, number> = {}
 
   if (category === 'clothing') {
     const subCategories = Object.keys(sizeChart)
@@ -152,19 +140,17 @@ function tryBodyMeasurementSizing(
       
       // Use available measurements to estimate size
       if (measurements.chest_cm) {
-        const chestBasedSize = estimateSizeByChest(measurements.chest_cm, subChart, fitPreference)
+        const chestBasedSize = estimateSizeByChest(measurements.chest_cm, subChart, fitPref)
         if (chestBasedSize.confidence > bestConfidence) {
           bestSize = chestBasedSize.size
           bestConfidence = chestBasedSize.confidence
-          bestMeasurements = chestBasedSize.measurements
           bestRationale = `Estimated size based on chest measurement (${measurements.chest_cm}cm)`
         }
       } else if (measurements.waist_cm) {
-        const waistBasedSize = estimateSizeByWaist(measurements.waist_cm, subChart, fitPreference)
+        const waistBasedSize = estimateSizeByWaist(measurements.waist_cm, subChart, fitPref)
         if (waistBasedSize.confidence > bestConfidence) {
           bestSize = waistBasedSize.size
           bestConfidence = waistBasedSize.confidence
-          bestMeasurements = waistBasedSize.measurements
           bestRationale = `Estimated size based on waist measurement (${measurements.waist_cm}cm)`
         }
       }
@@ -175,14 +161,13 @@ function tryBodyMeasurementSizing(
     size: bestSize || 'M', // Default fallback
     confidence: Math.max(bestConfidence, 0.3),
     rationale: bestRationale || 'Default size recommendation due to insufficient measurements',
-    measurements: bestMeasurements,
   }
 }
 
 function calculateClothingConfidence(
-  measurements: SizeRequest['measurements'],
+  measurements: SizeSuggestInput['measurements'],
   sizeData: any,
-  fitPreference: string
+  fitPref: string
 ): number {
   let matches = 0
   let totalChecks = 0
@@ -208,9 +193,9 @@ function calculateClothingConfidence(
   // Adjust confidence based on fit preference
   let confidence = totalChecks > 0 ? matches / totalChecks : 0.5
   
-  if (fitPreference === 'slim') {
+  if (fitPref === 'slim') {
     confidence *= 0.9 // Slightly lower confidence for slim fit
-  } else if (fitPreference === 'loose') {
+  } else if (fitPref === 'loose') {
     confidence *= 0.85 // Lower confidence for loose fit
   }
 
@@ -220,12 +205,11 @@ function calculateClothingConfidence(
 function estimateSizeByChest(
   chestCm: number,
   sizeChart: any,
-  fitPreference: string
-): { size: string; confidence: number; measurements: Record<string, number> } {
+  fitPref: string
+): { size: string; confidence: number } {
   const sizes = Object.keys(sizeChart)
   let bestSize = 'M'
   let bestConfidence = 0
-  let bestMeasurements: Record<string, number> = {}
 
   for (const size of sizes) {
     const sizeData = sizeChart[size]
@@ -236,23 +220,21 @@ function estimateSizeByChest(
       if (confidence > bestConfidence) {
         bestSize = size
         bestConfidence = confidence
-        bestMeasurements = sizeData
       }
     }
   }
 
-  return { size: bestSize, confidence: bestConfidence, measurements: bestMeasurements }
+  return { size: bestSize, confidence: bestConfidence }
 }
 
 function estimateSizeByWaist(
   waistCm: number,
   sizeChart: any,
-  fitPreference: string
-): { size: string; confidence: number; measurements: Record<string, number> } {
+  fitPref: string
+): { size: string; confidence: number } {
   const sizes = Object.keys(sizeChart)
   let bestSize = 'M'
   let bestConfidence = 0
-  let bestMeasurements: Record<string, number> = {}
 
   for (const size of sizes) {
     const sizeData = sizeChart[size]
@@ -263,10 +245,25 @@ function estimateSizeByWaist(
       if (confidence > bestConfidence) {
         bestSize = size
         bestConfidence = confidence
-        bestMeasurements = sizeData
       }
     }
   }
 
-  return { size: bestSize, confidence: bestConfidence, measurements: bestMeasurements }
+  return { size: bestSize, confidence: bestConfidence }
+}
+
+function generateAlternates(size: string, sizeChart: any): string[] {
+  const sizes = Object.keys(sizeChart)
+  const currentIndex = sizes.indexOf(size)
+  const alternates: string[] = []
+  
+  // Add one size up and down if available
+  if (currentIndex > 0) {
+    alternates.push(sizes[currentIndex - 1])
+  }
+  if (currentIndex < sizes.length - 1) {
+    alternates.push(sizes[currentIndex + 1])
+  }
+  
+  return alternates
 }

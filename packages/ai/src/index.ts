@@ -1,4 +1,4 @@
-import { pipeline } from '@xenova/transformers'
+import 'server-only'
 
 let embeddingPipeline: any = null
 
@@ -7,6 +7,7 @@ let embeddingPipeline: any = null
  */
 async function getEmbeddingPipeline() {
   if (!embeddingPipeline) {
+    const { pipeline } = await import('@xenova/transformers')
     embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')
   }
   return embeddingPipeline
@@ -46,3 +47,6 @@ export async function embedTexts(texts: string[]): Promise<number[][]> {
   
   return embeddings
 }
+
+// Export cosine similarity functions
+export * from './cosine'

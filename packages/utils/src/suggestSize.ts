@@ -1,5 +1,6 @@
-import brands from '@/data/brands.json'
-import sizeCharts from '@/data/sizeCharts.json'
+import type { Brand, SizeChart } from '../../types/data'
+import brands from '../../data/brands.json' assert { type: 'json' }
+import sizeCharts from '../../data/sizeCharts.json' assert { type: 'json' }
 
 export interface SizeRequest {
   brand: string
@@ -89,7 +90,7 @@ function tryGarmentFirstSizing(
     for (const size of sizes) {
       const sizeData = sizeChart.US[size]
       const difference = Math.abs(sizeData.foot_mm - measurements.foot_mm)
-      
+
       if (difference < minDifference) {
         minDifference = difference
         closestSize = size
@@ -104,15 +105,15 @@ function tryGarmentFirstSizing(
   } else if (category === 'clothing') {
     // Clothing sizing based on primary measurements
     const subCategories = Object.keys(sizeChart)
-    
+
     for (const subCategory of subCategories) {
       const subChart = sizeChart[subCategory]
       const sizes = Object.keys(subChart)
-      
+
       for (const size of sizes) {
         const sizeData = subChart[size]
         const confidence = calculateClothingConfidence(measurements, sizeData, fitPreference)
-        
+
         if (confidence > bestConfidence) {
           bestSize = size
           bestConfidence = confidence
@@ -145,11 +146,11 @@ function tryBodyMeasurementSizing(
 
   if (category === 'clothing') {
     const subCategories = Object.keys(sizeChart)
-    
+
     for (const subCategory of subCategories) {
       const subChart = sizeChart[subCategory]
       const sizes = Object.keys(subChart)
-      
+
       // Use available measurements to estimate size
       if (measurements.chest_cm) {
         const chestBasedSize = estimateSizeByChest(measurements.chest_cm, subChart, fitPreference)
@@ -207,7 +208,7 @@ function calculateClothingConfidence(
 
   // Adjust confidence based on fit preference
   let confidence = totalChecks > 0 ? matches / totalChecks : 0.5
-  
+
   if (fitPreference === 'slim') {
     confidence *= 0.9 // Slightly lower confidence for slim fit
   } else if (fitPreference === 'loose') {
@@ -232,7 +233,7 @@ function estimateSizeByChest(
     if (sizeData.chest_cm) {
       const difference = Math.abs(chestCm - sizeData.chest_cm)
       const confidence = Math.max(0.6, 1 - difference / 20)
-      
+
       if (confidence > bestConfidence) {
         bestSize = size
         bestConfidence = confidence
@@ -259,7 +260,7 @@ function estimateSizeByWaist(
     if (sizeData.waist_cm) {
       const difference = Math.abs(waistCm - sizeData.waist_cm)
       const confidence = Math.max(0.6, 1 - difference / 20)
-      
+
       if (confidence > bestConfidence) {
         bestSize = size
         bestConfidence = confidence

@@ -4,15 +4,15 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Button } from '@/apps/web/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/apps/web/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/apps/web/components/ui/form'
-import { Input } from '@/apps/web/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/apps/web/components/ui/select'
-import { Badge } from '@/apps/web/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
 import { Ruler, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import brands from '@/data/brands.json'
+import brands from '@/lib/brands.json'
 
 const sizeFormSchema = z.object({
   brand: z.string().min(1, 'Brand is required'),
@@ -33,10 +33,10 @@ const sizeFormSchema = z.object({
 type SizeFormData = z.infer<typeof sizeFormSchema>
 
 interface SizeSuggestion {
-  size: string
+  sizeLabel: string
   confidence: number
   rationale: string
-  measurements: Record<string, number>
+  alternates: string[]
 }
 
 export default function FitPage() {
@@ -69,7 +69,9 @@ export default function FitPage() {
         })
       )
 
-      const response = await fetch('/api/size/suggest', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      
+      const response = await fetch(`${apiUrl}/v1/size/suggest`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,18 +79,18 @@ export default function FitPage() {
         body: JSON.stringify({
           brand: data.brand,
           category: data.category,
+          fitPref: data.fitPreference,
           measurements,
-          fitPreference: data.fitPreference,
         }),
       })
 
       const result = await response.json()
 
-      if (!result.success) {
+      if (!response.ok) {
         throw new Error(result.error || 'Failed to get size suggestion')
       }
 
-      setSuggestion(result.data)
+      setSuggestion(result)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -113,8 +115,8 @@ export default function FitPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Ruler className="h-8 w-8 text-primary" />
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Ruler className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Your Size</h1>
             <p className="text-gray-600">
@@ -319,8 +321,8 @@ export default function FitPage() {
 
               {/* Error Message */}
               {error && (
-                <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-md">
-                  <p className="text-destructive text-sm">{error}</p>
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-red-600 text-sm">{error}</p>
                 </div>
               )}
 
@@ -337,7 +339,7 @@ export default function FitPage() {
                   <div className="space-y-3">
                     <div>
                       <span className="font-medium text-green-900">Recommended Size:</span>
-                      <span className="ml-2 text-2xl font-bold text-green-700">{suggestion.size}</span>
+                      <span className="ml-2 text-2xl font-bold text-green-700">{suggestion.sizeLabel}</span>
                     </div>
                     
                     <div>
@@ -345,13 +347,13 @@ export default function FitPage() {
                       <p className="mt-1 text-green-800">{suggestion.rationale}</p>
                     </div>
 
-                    {Object.keys(suggestion.measurements).length > 0 && (
+                    {suggestion.alternates.length > 0 && (
                       <div>
-                        <span className="font-medium text-green-900">Size Chart Measurements:</span>
+                        <span className="font-medium text-green-900">Alternative Sizes:</span>
                         <div className="mt-2 flex flex-wrap gap-2">
-                          {Object.entries(suggestion.measurements).map(([key, value]) => (
-                            <Badge key={key} variant="outline" className="text-xs">
-                              {key}: {value}
+                          {suggestion.alternates.map((size) => (
+                            <Badge key={size} variant="outline" className="text-xs">
+                              {size}
                             </Badge>
                           ))}
                         </div>

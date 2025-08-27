@@ -2,8 +2,8 @@
 
 import React, { useCallback, useState } from 'react'
 import { Upload, X } from 'lucide-react'
-import { cn } from '@/apps/web/lib/utils'
-import { Button } from '@/apps/web/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface DropzoneProps {
   onFileSelect: (file: File) => void
