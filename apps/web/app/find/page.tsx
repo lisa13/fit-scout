@@ -2,107 +2,81 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Search, ArrowLeft, ExternalLink } from 'lucide-react'
+import { Search, ArrowLeft, Heart, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
-import Dropzone from '@/components/Dropzone'
 
 interface Product {
   id: string
-  title: string
-  brandId: string
-  category: string
+  name: string
   price: number
   image: string
-  score: number
-  reason?: string
+  brand: string
+  category: string
 }
 
 export default function FindPage() {
-  const [url, setUrl] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [products, setProducts] = useState<Product[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedBrand, setSelectedBrand] = useState('')
 
-  const handleUrlSearch = async () => {
-    if (!url.trim()) {
-      setError('Please enter a URL')
-      return
+  // Mock products data matching your design
+  const products: Product[] = [
+    {
+      id: '1',
+      name: 'Funduna Jacket',
+      price: 2.11,
+      image: '/api/placeholder/300/400',
+      brand: 'Nike',
+      category: 'Jackets'
+    },
+    {
+      id: '2',
+      name: 'Bredlech Hoodie',
+      price: 3.43,
+      image: '/api/placeholder/300/400',
+      brand: 'Adidas',
+      category: 'Hoodies'
+    },
+    {
+      id: '3',
+      name: 'Find Pants',
+      price: 50.67,
+      image: '/api/placeholder/300/400',
+      brand: 'Puma',
+      category: 'Pants'
     }
+  ]
 
-    setIsLoading(true)
-    setError(null)
-    setProducts([])
-
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      
-      const response = await fetch(`${apiUrl}/v1/find`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url.trim() }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to find similar products')
-      }
-
-      setProducts(result.items)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setIsLoading(false)
+  const similarProducts: Product[] = [
+    {
+      id: '4',
+      name: 'Stidefiind T-Shirt',
+      price: 2.009,
+      image: '/api/placeholder/300/400',
+      brand: 'Nike',
+      category: 'T-Shirts'
+    },
+    {
+      id: '5',
+      name: 'Samba Smartwatch',
+      price: 4.009,
+      image: '/api/placeholder/300/400',
+      brand: 'Samsung',
+      category: 'Accessories'
     }
-  }
-
-  const handleImageSearch = async (file: File) => {
-    setIsLoading(true)
-    setError(null)
-    setProducts([])
-
-    try {
-      // For demo purposes, we'll use a placeholder text
-      // In a real implementation, you'd extract text from the image
-      const caption = `Product from uploaded image: ${file.name}`
-      
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      
-      const response = await fetch(`${apiUrl}/v1/find`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ caption }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to find similar products')
-      }
-
-      setProducts(result.items)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+            <Link href="/" className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
@@ -111,151 +85,147 @@ export default function FindPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
+          {/* Page Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-purple-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Similar Products</h1>
-            <p className="text-gray-600">
-              Enter a product URL or upload an image to find similar items
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Find</h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              Discover products that match your style and preferences
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* URL Search */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Search by URL</CardTitle>
-                <CardDescription>
-                  Enter a product URL to find similar items
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex space-x-2">
-                  <Input
-                    type="url"
-                    placeholder="https://example.com/product"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleUrlSearch()}
-                  />
-                  <Button onClick={handleUrlSearch} disabled={isLoading}>
-                    Search
-                  </Button>
+          {/* Search and Filters */}
+          <div className="mb-8">
+            <Card className="p-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* Search Bar */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <Input
+                      placeholder="Search for products..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Image Upload */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Search by Image</CardTitle>
-                <CardDescription>
-                  Upload a product image to find similar items
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Dropzone onFileSelect={handleImageSearch} disabled={isLoading} />
-              </CardContent>
+                {/* Category Filter */}
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="clothing">Clothing</SelectItem>
+                    <SelectItem value="shoes">Shoes</SelectItem>
+                    <SelectItem value="accessories">Accessories</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Brand Filter */}
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Brands</SelectItem>
+                    <SelectItem value="nike">Nike</SelectItem>
+                    <SelectItem value="adidas">Adidas</SelectItem>
+                    <SelectItem value="puma">Puma</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </Card>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Loading State */}
-          {isLoading && (
+          {/* Products Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Products</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-6">
-                    <Skeleton className="h-48 w-full mb-4" />
-                    <Skeleton className="h-4 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-1/2 mb-2" />
-                    <Skeleton className="h-4 w-1/4" />
+              {products.map((product) => (
+                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-square bg-gray-100 dark:bg-gray-800 relative">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 right-3 flex space-x-2">
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 bg-white/80 hover:bg-white">
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        ${product.price}
+                      </span>
+                      <Badge variant="outline">{product.category}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      <span>Brand: {product.brand}</span>
+                    </div>
+                    <Button className="w-full" size="sm">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </Button>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          )}
+          </div>
 
-          {/* Results */}
-          {!isLoading && products.length > 0 && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Similar Products ({products.length})
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <Card key={product.id} className="overflow-hidden">
-                    <div className="aspect-square bg-gray-100">
-                      <img
-                        src={product.image}
-                        alt={product.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-gray-900 line-clamp-2">
-                          {product.title}
-                        </h3>
-                        <Badge variant="secondary" className="text-xs ml-2 flex-shrink-0">
-                          {Math.round(product.score * 100)}%
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">Brand:</span>
-                          <span className="font-medium">{product.brandId}</span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">Category:</span>
-                          <span className="font-medium capitalize">{product.category}</span>
-                        </div>
-                        
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">Price:</span>
-                          <span className="font-medium">${product.price}</span>
-                        </div>
-                      </div>
-
-                      {product.reason && (
-                        <div className="mt-3 pt-3 border-t">
-                          <p className="text-xs text-gray-500">{product.reason}</p>
-                        </div>
-                      )}
-
-                      <Button className="w-full mt-4" variant="outline" size="sm">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        View Product
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+          {/* Find Similar Section */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Find Similar</h2>
+              <Button variant="ghost" className="text-blue-600 hover:text-blue-700">
+                View All →
+              </Button>
             </div>
-          )}
-
-          {/* No Results */}
-          {!isLoading && !error && products.length === 0 && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-600">
-                  Try entering a different URL or uploading a different image
-                </p>
-              </CardContent>
-            </Card>
-          )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {similarProducts.map((product) => (
+                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="aspect-square bg-gray-100 dark:bg-gray-800 relative">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 right-3 flex space-x-2">
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 bg-white/80 hover:bg-white">
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        ${product.price}
+                      </span>
+                      <Badge variant="outline">{product.category}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      <span>Brand: {product.brand}</span>
+                    </div>
+                    <Button className="w-full" size="sm">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

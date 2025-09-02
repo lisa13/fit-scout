@@ -1,110 +1,36 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Ruler, ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import brands from '@/lib/brands.json'
-
-const sizeFormSchema = z.object({
-  brand: z.string().min(1, 'Brand is required'),
-  category: z.enum(['shoes', 'clothing', 'accessories'], {
-    errorMap: () => ({ message: 'Category is required' }),
-  }),
-  chest_cm: z.number().min(50).max(200).optional(),
-  waist_cm: z.number().min(50).max(200).optional(),
-  shoulder_cm: z.number().min(30).max(100).optional(),
-  inseam_cm: z.number().min(50).max(150).optional(),
-  hip_cm: z.number().min(50).max(200).optional(),
-  foot_mm: z.number().min(200).max(400).optional(),
-  fitPreference: z.enum(['slim', 'regular', 'loose'], {
-    errorMap: () => ({ message: 'Fit preference is required' }),
-  }),
-})
-
-type SizeFormData = z.infer<typeof sizeFormSchema>
-
-interface SizeSuggestion {
-  sizeLabel: string
-  confidence: number
-  rationale: string
-  alternates: string[]
-}
 
 export default function FitPage() {
-  const [suggestion, setSuggestion] = useState<SizeSuggestion | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [selectedBrand, setSelectedBrand] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedWaist, setSelectedWaist] = useState('')
+  const [selectedFit, setSelectedFit] = useState('')
+  const [selectedScore, setSelectedScore] = useState('')
+  const [recommendedSize, setRecommendedSize] = useState('')
+  const [showResults, setShowResults] = useState(false)
 
-  const form = useForm<SizeFormData>({
-    resolver: zodResolver(sizeFormSchema),
-    defaultValues: {
-      brand: '',
-      category: 'clothing',
-      fitPreference: 'regular',
-    },
-  })
-
-  const selectedCategory = form.watch('category')
-
-  const onSubmit = async (data: SizeFormData) => {
-    setIsLoading(true)
-    setError(null)
-    setSuggestion(null)
-
-    try {
-      // Filter out undefined measurements
-      const measurements = Object.fromEntries(
-        Object.entries(data).filter(([key, value]) => {
-          if (key === 'brand' || key === 'category' || key === 'fitPreference') return false
-          return value !== undefined && value !== null
-        })
-      )
-
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-      
-      const response = await fetch(`${apiUrl}/v1/size/suggest`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          brand: data.brand,
-          category: data.category,
-          fitPref: data.fitPreference,
-          measurements,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to get size suggestion')
-      }
-
-      setSuggestion(result)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setIsLoading(false)
+  const handleGetRecommendation = () => {
+    if (selectedBrand && selectedCategory && selectedWaist && selectedFit) {
+      setRecommendedSize('M')
+      setShowResults(true)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+            <Link href="/" className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
@@ -114,256 +40,144 @@ export default function FitPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
+          {/* Page Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Ruler className="h-8 w-8 text-blue-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Find Your Size</h1>
-            <p className="text-gray-600">
-              Enter your measurements and preferences to get personalized size recommendations
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Fit</h1>
+            <p className="text-gray-600 dark:text-gray-300">
+              Get personalized size recommendations based on your preferences
             </p>
           </div>
 
-          <Card>
+          {/* Main Form Card */}
+          <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle>Size Recommendation Form</CardTitle>
-              <CardDescription>
-                Fill in your measurements and we'll suggest the best size for you
-              </CardDescription>
+              <CardTitle className="text-xl">Size Recommendation</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Brand and Category */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="brand"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Brand</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a brand" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {brands.map((brand) => (
-                                <SelectItem key={brand.id} value={brand.id}>
-                                  {brand.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+            <CardContent className="space-y-6">
+              {/* Brand Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Brand</label>
+                <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="nike">Nike</SelectItem>
+                    <SelectItem value="adidas">Adidas</SelectItem>
+                    <SelectItem value="puma">Puma</SelectItem>
+                    <SelectItem value="under-armour">Under Armour</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="shoes">Shoes</SelectItem>
-                              <SelectItem value="clothing">Clothing</SelectItem>
-                              <SelectItem value="accessories">Accessories</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+              {/* Category Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="shirts">Shirts</SelectItem>
+                    <SelectItem value="pants">Pants</SelectItem>
+                    <SelectItem value="jackets">Jackets</SelectItem>
+                    <SelectItem value="shoes">Shoes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                  {/* Measurements */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Measurements</h3>
-                    
-                    {selectedCategory === 'shoes' ? (
-                      <FormField
-                        control={form.control}
-                        name="foot_mm"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Foot Length (mm)</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder="e.g., 270"
-                                {...field}
-                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="chest_cm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Chest (cm)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="e.g., 96"
-                                  {...field}
-                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+              {/* Waist Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Waist</label>
+                <Select value={selectedWaist} onValueChange={setSelectedWaist}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select waist size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="28">28</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="32">32</SelectItem>
+                    <SelectItem value="34">34</SelectItem>
+                    <SelectItem value="36">36</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                        <FormField
-                          control={form.control}
-                          name="waist_cm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Waist (cm)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="e.g., 81"
-                                  {...field}
-                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+              {/* Fit Preference */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Fit Preference</label>
+                <Select value={selectedFit} onValueChange={setSelectedFit}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select fit preference" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="slim">Slim</SelectItem>
+                    <SelectItem value="regular">Regular</SelectItem>
+                    <SelectItem value="loose">Loose</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                        <FormField
-                          control={form.control}
-                          name="shoulder_cm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Shoulder (cm)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="e.g., 47"
-                                  {...field}
-                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+              {/* Score Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Score</label>
+                <Select value={selectedScore} onValueChange={setSelectedScore}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select score" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High (90-100%)</SelectItem>
+                    <SelectItem value="medium">Medium (70-89%)</SelectItem>
+                    <SelectItem value="low">Low (50-69%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                        <FormField
-                          control={form.control}
-                          name="inseam_cm"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Inseam (cm)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  placeholder="e.g., 81"
-                                  {...field}
-                                  onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Fit Preference */}
-                  <FormField
-                    control={form.control}
-                    name="fitPreference"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Fit Preference</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="slim">Slim</SelectItem>
-                            <SelectItem value="regular">Regular</SelectItem>
-                            <SelectItem value="loose">Loose</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Getting Recommendation...' : 'Get Size Recommendation'}
-                  </Button>
-                </form>
-              </Form>
-
-              {/* Error Message */}
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-red-600 text-sm">{error}</p>
-                </div>
-              )}
-
-              {/* Size Suggestion */}
-              {suggestion && (
-                <div className="mt-6 p-6 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-green-900">Size Recommendation</h3>
-                    <Badge variant="secondary" className="text-sm">
-                      {Math.round(suggestion.confidence * 100)}% confidence
-                    </Badge>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div>
-                      <span className="font-medium text-green-900">Recommended Size:</span>
-                      <span className="ml-2 text-2xl font-bold text-green-700">{suggestion.sizeLabel}</span>
-                    </div>
-                    
-                    <div>
-                      <span className="font-medium text-green-900">Reasoning:</span>
-                      <p className="mt-1 text-green-800">{suggestion.rationale}</p>
-                    </div>
-
-                    {suggestion.alternates.length > 0 && (
-                      <div>
-                        <span className="font-medium text-green-900">Alternative Sizes:</span>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {suggestion.alternates.map((size) => (
-                            <Badge key={size} variant="outline" className="text-xs">
-                              {size}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              {/* Submit Button */}
+              <Button 
+                onClick={handleGetRecommendation}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={!selectedBrand || !selectedCategory || !selectedWaist || !selectedFit}
+              >
+                Get Recommendation
+              </Button>
             </CardContent>
           </Card>
+
+          {/* Results Section */}
+          {showResults && (
+            <Card className="mt-6 shadow-lg border-green-200 dark:border-green-800">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <CheckCircle className="h-6 w-6 text-green-600" />
+                  <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
+                    Size Recommendation
+                  </h3>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700 dark:text-gray-300">Recommended Size:</span>
+                    <Badge className="text-lg px-4 py-2 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                      {recommendedSize}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-700 dark:text-gray-300">Confidence:</span>
+                    <Badge variant="secondary">95%</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Progress Indicators */}
+          <div className="mt-8 flex justify-center space-x-2">
+            <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+            <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+            <div className="w-3 h-3 bg-gray-300 rounded-full"></div>
+          </div>
         </div>
       </div>
     </div>
