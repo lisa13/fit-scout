@@ -2,7 +2,10 @@
   "name": "fit-scout",
   "private": true,
   "packageManager": "pnpm@10",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "pnpm -C apps/api dev & pnpm -C apps/web dev",
     "build": "pnpm -C apps/api build && pnpm -C apps/web build",
@@ -10,5 +13,8 @@
     "embed": "pnpm -C packages/ai embed",
     "lint": "echo 'add eslint later'",
     "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "vitest": "^3.2.4"
   }
 }
