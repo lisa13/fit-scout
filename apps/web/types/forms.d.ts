@@ -3,22 +3,22 @@
 declare global {
   namespace React {
     interface FormEvent<T = Element> {
-      preventDefault(): void
-      target: T
+      preventDefault(): void;
+      target: T;
     }
-    
+
     interface ChangeEvent<T = Element> {
-      target: T & { value: string }
+      target: T & { value: string };
     }
-    
+
     interface HTMLInputElement {
-      value: string
+      value: string;
     }
-    
+
     interface HTMLTextAreaElement {
-      value: string
+      value: string;
     }
   }
 }
 
-export {}
+export {};

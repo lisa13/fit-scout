@@ -1,42 +1,42 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Container } from "@/components/shell/Container"
-import { QueryPanel } from "@/components/QueryPanel"
-import { ProductCard } from "@/components/ProductCard"
-import { LoadingBlock } from "@/components/common/LoadingBlock"
-import { EmptyState } from "@/components/common/EmptyState"
-import { InlineError } from "@/components/common/InlineError"
-import { postJSON } from "@/lib/fetcher"
-import { Search } from "lucide-react"
-import type { FindResponse, Product } from "@/types"
+import React from "react";
+import { Container } from "@/components/shell/Container";
+import { QueryPanel } from "@/components/QueryPanel";
+import { ProductCard } from "@/components/ProductCard";
+import { LoadingBlock } from "@/components/common/LoadingBlock";
+import { EmptyState } from "@/components/common/EmptyState";
+import { InlineError } from "@/components/common/InlineError";
+import { postJSON } from "@/lib/fetcher";
+import { Search } from "lucide-react";
+import type { FindResponse, Product } from "@/types";
 
 export default function FindPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [products, setProducts] = useState<FindResponse["items"]>([])
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [products, setProducts] = React.useState<FindResponse["items"]>([]);
 
   const handleSubmit = async (data: { url?: string; caption?: string }) => {
-    setIsLoading(true)
-    setError(null)
-    setProducts([])
+    setIsLoading(true);
+    setError(null);
+    setProducts([]);
 
     try {
-      const response = await postJSON<FindResponse>("/v1/find", data)
-      setProducts(response.items)
+      const response = await postJSON<FindResponse>("/v1/find", data);
+      setProducts(response.items);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen py-8">
       <Container>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Find Similar Products</h1>
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-8 text-center">
+            <h1 className="mb-2 text-3xl font-bold">Find Similar Products</h1>
             <p className="text-muted-foreground">
               Upload a product image or paste a URL to find similar items
             </p>
@@ -56,10 +56,15 @@ export default function FindPage() {
 
           {!isLoading && products.length > 0 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">
+              <h2 className="mb-6 text-2xl font-bold">
                 Similar Products ({products.length})
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+              <div
+                className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+                style={{
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                }}
+              >
                 {products.map((product: Product) => (
                   <ProductCard
                     key={product.id}
@@ -85,5 +90,5 @@ export default function FindPage() {
         </div>
       </Container>
     </div>
-  )
+  );
 }

@@ -62,7 +62,7 @@
   .card {
     @apply rounded-2xl border bg-card text-card-foreground shadow;
   }
-  
+
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:opacity-90;
   }
@@ -77,5 +77,8 @@
 
 /* Smooth transitions for theme switching */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 }

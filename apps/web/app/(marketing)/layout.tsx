@@ -1,12 +1,12 @@
-import type { ReactNode } from "react"
-import { ThemeProvider } from "@/components/ThemeProvider"
-import { Header } from "@/components/shell/Header"
-import { Footer } from "@/components/shell/Footer"
+import React from "react";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Header } from "@/components/shell/Header";
+import { Footer } from "@/components/shell/Footer";
 
 export default function MarketingLayout({
   children,
 }: {
-  children: ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <ThemeProvider
@@ -21,5 +21,5 @@ export default function MarketingLayout({
         <Footer />
       </div>
     </ThemeProvider>
-  )
+  );
 }

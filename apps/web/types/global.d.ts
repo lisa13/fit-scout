@@ -3,7 +3,7 @@
 declare global {
   namespace React {
     interface IntrinsicElements {
-      [elemName: string]: any
+      [elemName: string]: any;
     }
   }
 }
@@ -12,9 +12,9 @@ declare global {
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      [elemName: string]: any
+      [elemName: string]: any;
     }
   }
 }
 
-export {}
+export {};

@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Container } from "./Container"
+import Link from "next/link";
+import { Container } from "./Container";
 
 export function Footer() {
   return (
@@ -16,19 +16,19 @@ export function Footer() {
               href="https://github.com/fitscout/fitscout"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="transition-colors hover:text-primary"
             >
               GitHub
             </Link>
             <Link
               href="/privacy"
-              className="hover:text-primary transition-colors"
+              className="transition-colors hover:text-primary"
             >
               Privacy
             </Link>
             <Link
               href="/terms"
-              className="hover:text-primary transition-colors"
+              className="transition-colors hover:text-primary"
             >
               Terms
             </Link>
@@ -36,5 +36,5 @@ export function Footer() {
         </div>
       </Container>
     </footer>
-  )
+  );
 }

@@ -3,25 +3,29 @@
 declare global {
   namespace React {
     interface IntrinsicElements {
-      [elemName: string]: any
+      [elemName: string]: any;
     }
-    
-    type ReactNode = any
-    type ComponentType<P = {}> = (props: P) => JSX.Element | null
+
+    type ReactNode = any;
+    type ComponentType<P = {}> = (props: P) => JSX.Element | null;
   }
-  
+
   namespace JSX {
     interface IntrinsicElements {
-      [elemName: string]: any
+      [elemName: string]: any;
     }
-    
-    interface Element extends React.ReactElement<any, any> { }
+
+    interface Element extends React.ReactElement<any, any> {}
     interface ElementClass extends React.Component<any> {
-      render(): React.ReactNode
+      render(): React.ReactNode;
     }
-    interface ElementAttributesProperty { props: {} }
-    interface ElementChildrenAttribute { children: {} }
+    interface ElementAttributesProperty {
+      props: {};
+    }
+    interface ElementChildrenAttribute {
+      children: {};
+    }
   }
 }
 
-export {}
+export {};

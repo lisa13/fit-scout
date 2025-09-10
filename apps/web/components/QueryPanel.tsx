@@ -1,26 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, Link as LinkIcon } from "lucide-react"
-import type { QueryPanelProps, QueryMode, InputChangeHandler, TextareaChangeHandler, FormSubmitHandler } from "@/types"
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Link as LinkIcon } from "lucide-react";
+import type {
+  QueryPanelProps,
+  QueryMode,
+  InputChangeHandler,
+  TextareaChangeHandler,
+  FormSubmitHandler,
+} from "@/types";
 
 export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
-  const [mode, setMode] = useState<QueryMode>("url")
-  const [url, setUrl] = useState("")
-  const [caption, setCaption] = useState("")
+  const [mode, setMode] = React.useState<QueryMode>("url");
+  const [url, setUrl] = React.useState("");
+  const [caption, setCaption] = React.useState("");
 
   const handleSubmit: FormSubmitHandler = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (mode === "url" && url.trim()) {
-      onSubmit({ url: url.trim() })
+      onSubmit({ url: url.trim() });
     } else if (mode === "caption" && caption.trim()) {
-      onSubmit({ caption: caption.trim() })
+      onSubmit({ caption: caption.trim() });
     }
-  }
+  };
 
   return (
     <Card>
@@ -34,7 +40,7 @@ export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
             <button
               type="button"
               onClick={() => setMode("url")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 mode === "url"
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -46,7 +52,7 @@ export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
             <button
               type="button"
               onClick={() => setMode("caption")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 mode === "caption"
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
@@ -64,12 +70,12 @@ export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
                 type="url"
                 placeholder="https://example.com/product"
                 value={url}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
+                onChange={(e: any) => setUrl(e.target.value)}
                 required
               />
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={isLoading || !url.trim()}
               >
                 {isLoading ? "Fetching..." : "Fetch & Find"}
@@ -80,13 +86,13 @@ export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
               <Textarea
                 placeholder="Describe the product you're looking for..."
                 value={caption}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCaption(e.target.value)}
+                onChange={(e: any) => setCaption(e.target.value)}
                 rows={4}
                 required
               />
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={isLoading || !caption.trim()}
               >
                 {isLoading ? "Searching..." : "Find"}
@@ -96,5 +102,5 @@ export function QueryPanel({ onSubmit, isLoading = false }: QueryPanelProps) {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import type { ConfidenceBarProps } from "@/types"
+import type { ConfidenceBarProps } from "@/types";
 
 export function ConfidenceBar({ value, className = "" }: ConfidenceBarProps) {
-  const percentage = Math.round(value * 100)
-  
+  const percentage = Math.round(value * 100);
+
   return (
     <div className={`w-full ${className}`}>
-      <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
         <span>Confidence</span>
         <span>{percentage}%</span>
       </div>
-      <div className="w-full bg-muted rounded-full h-2">
+      <div className="h-2 w-full rounded-full bg-muted">
         <div
-          className="bg-primary h-2 rounded-full transition-all duration-300"
+          className="h-2 rounded-full bg-primary transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />
       </div>
     </div>
-  )
+  );
 }
