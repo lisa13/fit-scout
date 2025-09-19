@@ -56,3 +56,4 @@ describe('suggestSize', () => {
     expect(result.rationale).toContain('Estimated size based on chest measurement')
   })
 })
+

@@ -48,7 +48,7 @@ export function Dropzone({
     [acceptedTypes, maxSize],
   );
 
-  const handleFile = useCallback(
+  const handleFile = React.useCallback(
     (file: File) => {
       const validationError = validateFile(file);
       if (validationError) {
@@ -63,17 +63,17 @@ export function Dropzone({
     [validateFile, onFileSelect],
   );
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = React.useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = React.useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback(
+  const handleDrop = React.useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       setIsDragOver(false);
@@ -86,7 +86,7 @@ export function Dropzone({
     [handleFile],
   );
 
-  const handleFileInput = useCallback(
+  const handleFileInput = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(e.target.files || []);
       if (files.length > 0) {
@@ -96,7 +96,7 @@ export function Dropzone({
     [handleFile],
   );
 
-  const removeFile = useCallback(() => {
+  const removeFile = React.useCallback(() => {
     setSelectedFile(null);
     setError(null);
   }, []);

@@ -16,3 +16,4 @@ declare module "tailwind-merge" {
 }
 
 export {};
+

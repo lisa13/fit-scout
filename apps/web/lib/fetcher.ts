@@ -8,3 +8,4 @@ export async function postJSON<T>(path: string, body: unknown): Promise<T> {
   if (!r.ok) throw new Error(await r.text().catch(() => r.statusText));
   return r.json();
 }
+

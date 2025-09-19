@@ -168,12 +168,12 @@ declare module "@radix-ui/react-collapsible" {
     onOpenChange?: (open: boolean) => void;
     [key: string]: any;
   }>;
-  export const Trigger: ComponentType<{
+  export const CollapsibleTrigger: ComponentType<{
     children: ReactNode;
     asChild?: boolean;
     [key: string]: any;
   }>;
-  export const Content: ComponentType<{
+  export const CollapsibleContent: ComponentType<{
     children: ReactNode;
     [key: string]: any;
   }>;

@@ -13,7 +13,7 @@ const SelectValue = SelectPrimitive.Value;
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>, ref: any) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -33,7 +33,7 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 const SelectScrollUpButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
->(({ className, ...props }, ref) => (
+>(({ className, ...props }: React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>, ref: any) => (
   <SelectPrimitive.ScrollUpButton
     ref={ref}
     className={cn(
@@ -50,7 +50,7 @@ SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
 const SelectScrollDownButton = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
->(({ className, ...props }, ref) => (
+>(({ className, ...props }: any, ref: any) => (
   <SelectPrimitive.ScrollDownButton
     ref={ref}
     className={cn(
@@ -100,7 +100,7 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
 const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(({ className, ...props }, ref) => (
+>(({ className, ...props }: any, ref: any) => (
   <SelectPrimitive.Label
     ref={ref}
     className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
@@ -135,7 +135,7 @@ SelectItem.displayName = SelectPrimitive.Item.displayName;
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(({ className, ...props }, ref) => (
+>(({ className, ...props }: any, ref: any) => (
   <SelectPrimitive.Separator
     ref={ref}
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
